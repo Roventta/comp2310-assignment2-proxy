@@ -1,0 +1,15 @@
+cache.c:
+	use two kinds of struct, one is for metadata, other is the cache nodes that form a linked list.
+	the liked list is capsuled by cacheStart and cacheEnd.
+	on insert, the new cache will be added to the nextObject of cacheStart.
+	cacheWalkThrough is a function that walk through the link list, adding every cache a one on age, it also finds LFU and LRU cache, 
+	and save in metadata.
+
+	during walkThrough and insert, a wr lock is applied, since the stuff they are writing will be read by others, and make decision base on them, multiple Read after Write hazard exhibits.
+
+proxy.c:
+	prethreaded proxy, totally four threads are waiting for jobs.
+	after reading client message, host and uri are extracted, a url is also combined.
+	proxy will first search in cache, if it has, directly send.
+	if not, connect to server for web content.	
+./proxy <port> <eviction policy> 1 is LFU, 0 is LRU
